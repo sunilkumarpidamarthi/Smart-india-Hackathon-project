@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        button
+        {
+            background-color:mediumorchid ;
+        }
+    </style>
+    <body bgcolor="aqua"
+    <meta charset="UTF-8"
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .options {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .option {
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .timer {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .score {
+            font-size: 16px;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz Game</h1>
+        <p class="question" id="question"></p>
+        <div class="options" id="options"></div>
+        <p class="timer" id="timer"></p>
+        <p class="score" id="score">Score: 0</p>
+        <button class="btn" id="startButton" onclick="startGame()">Start Game</button>
+        <button class="btn" id="nextButton" onclick="nextQuestion()" disabled>Next Question</button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What is the first article of the United Nations Convention on the Rights of the Child?",
+                options: [
+                    "All children have the right to an education.",
+                    "All rights are inherent to all children without discrimination.",
+                    "Children have the right to play.",
+                    "Children have the right to work."
+                ],
+                answerIndex: 1
+            },
+            {
+                question: "What is the capital of Japan?",
+                options: [
+                    "Beijing",
+                    "Tokyo",
+                    "Seoul",
+                    "Bangkok"
+                ],
+                answerIndex: 0
+            },
+            {
+                question: "What is the capital of India",
+                options: [
+                    "Delhi",
+                    "Hyderabad",
+                    "Mumbai",
+                    "Chennai"
+                ],
+                answerIndex: 0
+            },
+            {
+                question: "what is the Rigth Age to Vote",
+                options: [
+                    "12",
+                    "10",
+                    "16",
+                    "18"
+                ],
+                answerIndex: 3
+            },
+
+            // Add more questions here
+        ];
+
+        let currentQuestionIndex = -1;
+        let currentTimer;
+        let score = 0;
+        let gameStarted = false;
+
+        function startGame() {
+            if (!gameStarted) {
+                gameStarted = true;
+                document.getElementById("startButton").disabled = true;
+                document.getElementById("nextButton").disabled = false;
+                document.getElementById("score").textContent = "Score: 0";
+                currentQuestionIndex = -1;
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                const questionElement = document.getElementById("question");
+                const optionsElement = document.getElementById("options");
+                const timerElement = document.getElementById("timer");
+                const currentQuestion = questions[currentQuestionIndex];
+
+                questionElement.textContent = currentQuestion.question;
+                timerElement.textContent = "Timer: 10"; // Set the initial timer value
+
+                optionsElement.innerHTML = "";
+                for (let i = 0; i < currentQuestion.options.length; i++) {
+                    const optionElement = document.createElement("div");
+                    optionElement.className = "option";
+                    optionElement.textContent = currentQuestion.options[i];
+                    optionElement.onclick = function() {
+                        checkAnswer(i);
+                    };
+                    optionsElement.appendChild(optionElement);
+                }
+
+                // Start the timer countdown
+                let timeLeft = 10;
+                clearInterval(currentTimer);
+                currentTimer = setInterval(function() {
+                    timerElement.textContent = `Timer: ${timeLeft}`;
+                    timeLeft--;
+
+                    if (timeLeft < 0) {
+                        clearInterval(currentTimer);
+                        checkAnswer(-1); // Time's up
+                    }
+                }, 1000);
+            } else {
+                endGame();
+            }
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const timerElement = document.getElementById("timer");
+            clearInterval(currentTimer);
+
+            if (selectedIndex === currentQuestion.answerIndex) {
+                score++;
+                document.getElementById("score").textContent = `Score: ${score}`;
+                timerElement.textContent = "Correct!";
+            } else if (selectedIndex === -1) {
+                timerElement.textContent = "Time's up! The correct answer was: " + currentQuestion.options[currentQuestion.answerIndex];
+            } else {
+                timerElement.textContent = "Incorrect. The correct answer was: " + currentQuestion.options[currentQuestion.answerIndex];
+            }
+
+            document.querySelectorAll(".option").forEach(function(option) {
+                option.onclick = null;
+            });
+
+            document.getElementById("nextButton").disabled = false;
+        }
+
+        function endGame() {
+            alert(`Game Over!\nYour Score: ${score}`);
+            location.reload(); // Reload the page to start a new game
+        }
+    </script>
+</body>
+</html>

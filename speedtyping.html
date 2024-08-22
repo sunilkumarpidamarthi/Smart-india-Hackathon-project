@@ -1,0 +1,95 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        button
+        {
+         background-color:aqua;
+        }
+   </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Game with Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #word {
+            font-size: 36px;
+            margin-top: 100px;
+        }
+        #input {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #score {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #timer {
+            font-size: 24px;
+            margin-top: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="word"></div>
+    <input type="text" id="input" autofocus>
+    <div id="score">Score: 0</div>
+    <div id="timer">Time Left: 60</div>
+
+    <script>
+        const words = ["aptitude", "inheritance", "encapsulation", "polymorphism", "knowledge skills", "abstraction", "managment", "operating", "analysis", "memorable"];
+        let currentWordIndex = 0;
+        let score = 0;
+        let timeLeft = 60;
+        let timerInterval;
+
+        function startGame() {
+            document.getElementById("input").value = "";
+            const wordElement = document.getElementById("word");
+            wordElement.textContent = words[currentWordIndex];
+            wordElement.style.color = "black";
+            document.getElementById("input").focus();
+        }
+
+        function checkInput() {
+            const inputElement = document.getElementById("input");
+            const wordElement = document.getElementById("word");
+            const currentWord = words[currentWordIndex];
+
+            if (inputElement.value.trim().toLowerCase() === currentWord) {
+                wordElement.style.color = "green";
+                score++;
+                currentWordIndex++;
+                if (currentWordIndex < words.length) {
+                    startGame();
+                } else {
+                    wordElement.textContent = "Game Over! Your Score: " + score;
+                    clearInterval(timerInterval);
+                }
+            } else {
+                wordElement.style.color = "red";
+            }
+        }
+
+        function updateTimer() {
+            const timerElement = document.getElementById("timer");
+            timerElement.textContent = "Time Left: " + timeLeft;
+            if (timeLeft === 0) {
+                clearInterval(timerInterval);
+                document.getElementById("word").textContent = "Time's up! Your Score: " + score;
+                document.getElementById("input").disabled = true;
+            }
+            timeLeft--;
+        }
+
+        document.getElementById("input").addEventListener("input", checkInput);
+        startGame();
+        timerInterval = setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
+
